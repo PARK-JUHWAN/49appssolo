@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buy — 49 APPS, SOLO</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="images/web_icon.png">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Pretendard','Apple SD Gothic Neo',sans-serif;
+            background:#fafafa;color:#1d1d1f;-webkit-font-smoothing:antialiased;min-height:100vh;}
+  a{text-decoration:none;color:inherit;}
+
+  /* 좌상단 돌아가기 — 딱 하나 */
+  .back{position:fixed;top:18px;left:18px;z-index:50;display:inline-flex;align-items:center;gap:8px;
+        font-size:15px;font-weight:600;color:#1d1d1f;padding:10px 18px;border-radius:980px;
+        background:rgba(255,255,255,.9);border:.5px solid rgba(0,0,0,.1);backdrop-filter:blur(20px);
+        -webkit-backdrop-filter:blur(20px);cursor:pointer;transition:background .2s, transform .2s;}
+  .back:hover{background:#fff;transform:translateX(-2px);}
+  .back .ar{font-size:17px;line-height:1;}
+
+  .wrap{max-width:560px;margin:0 auto;padding:120px 24px 80px;}
+
+  .store{display:flex;align-items:center;justify-content:space-between;gap:16px;
+         background:#fff;border:.5px solid rgba(0,0,0,.08);border-radius:18px;padding:22px 24px;margin-bottom:14px;
+         transition:transform .2s ease, box-shadow .2s ease;cursor:pointer;}
+  .store:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.1);}
+  .store .left{display:flex;flex-direction:column;gap:10px;}
+  .store .name{font-size:19px;font-weight:600;letter-spacing:-.3px;}
+  .fmts{display:flex;gap:8px;flex-wrap:wrap;}
+  .fmt{font-size:12px;font-weight:600;letter-spacing:.3px;color:#0066ff;background:rgba(0,102,255,.08);
+       border-radius:980px;padding:4px 12px;}
+  .go{font-size:20px;color:#c7c7cc;flex-shrink:0;}
+
+  /* 준비중 버튼 (비활성) */
+  .store.soon{cursor:default;background:#f2f2f4;border-color:transparent;}
+  .store.soon:hover{transform:none;box-shadow:none;}
+  .store.soon .name{color:#aeaeb2;}
+  .store.soon .badge{font-size:13px;font-weight:600;color:#aeaeb2;}
+
+  /* 전체 준비중 페이지 */
+  .empty{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
+  .empty .t{font-size:30px;font-weight:600;letter-spacing:-1px;color:#1d1d1f;}
+  .empty .s{font-size:17px;color:#86868b;margin-top:12px;}
+
+  /* RTL */
+  html[dir="rtl"] .back{left:auto;right:18px;}
+  html[dir="rtl"] .back:hover{transform:translateX(2px);}
+  html[dir="rtl"] .go{transform:scaleX(-1);}
+
+  @media(max-width:768px){
+    .wrap{padding:100px 18px 64px;}
+    .store{padding:18px 20px;border-radius:14px;}
+    .store .name{font-size:17px;}
+    .empty .t{font-size:24px;}
+    .empty .s{font-size:15px;}
+  }
+</style>
+</head>
+<body>
+<a class="back" id="back"><span class="ar">&#8592;</span><span id="backLabel">Back</span></a>
+<div id="root"></div>
+
+<script src="js/langs.js"></script>
+<script>
+  const byId=(id)=>document.getElementById(id);
+  const getLang=(c)=>LANGS.find(l=>l.id===c);
+  const code=new URLSearchParams(location.search).get('lang');
+  const l=code&&getLang(code);
+
+  const FMT={ebook:{ko:'eBook',en:'eBook'},paper:{ko:'종이책',en:'Paperback'},hard:{ko:'양장본',en:'Hardcover'}};
+  function fmtLabel(f){ // 그 언어가 ko면 한국어 라벨, 아니면 영어 라벨
+    const t=FMT[f]; if(!t) return f;
+    return (l&&l.id==='ko')?t.ko:t.en;
+  }
+
+  // 돌아가기 = 항상 그 언어 랜딩으로 (history 아님, 직접 지정)
+  const backHref = 'index.html' + (l ? ('?lang='+l.id) : '');
+  byId('back').setAttribute('href', backHref);
+
+  if(!l){ location.replace('index.html'); }
+  else {
+    if(l.dir==='rtl') document.documentElement.setAttribute('dir','rtl');
+    document.documentElement.lang=l.id;
+    byId('backLabel').textContent = l.back || 'Back';
+
+    const usable = (l.stores||[]).filter(s=>s); // 존재하는 스토어
+    const anyLive = usable.some(s=>s.url && s.url!=='#');
+
+    if(!l.ready || usable.length===0 || !anyLive){
+      // 전체 준비중
+      byId('root').innerHTML =
+        '<div class="empty"><div class="t">'+ (l.soon||'Coming soon') +'</div>'+
+        '<div class="s">'+ (l.soonSub||'') +'</div></div>';
+    } else {
+      const wrap=document.createElement('div'); wrap.className='wrap';
+      usable.forEach(s=>{
+        const live = s.url && s.url!=='#';
+        const fmts=(s.fmt||[]).map(f=>'<span class="fmt">'+fmtLabel(f)+'</span>').join('');
+        if(live){
+          const a=document.createElement('a');
+          a.className='store'; a.href=s.url; a.target='_blank'; a.rel='noopener';
+          a.innerHTML='<div class="left"><div class="name">'+s.name+'</div><div class="fmts">'+fmts+'</div></div><div class="go">&#8594;</div>';
+          wrap.appendChild(a);
+        } else {
+          const d=document.createElement('div');
+          d.className='store soon';
+          d.innerHTML='<div class="left"><div class="name">'+s.name+'</div></div><div class="badge">'+(l.soon||'Coming soon')+'</div>';
+          wrap.appendChild(d);
+        }
+      });
+      byId('root').appendChild(wrap);
+    }
+  }
+</script>
+</body>
+</html>

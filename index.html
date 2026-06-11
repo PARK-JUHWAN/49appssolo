@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- SEO -->
+<title>49 APPS, SOLO — the book</title>
+<meta name="description" content="One app a year is hard enough. I run 49. The complete path from idea to App Store — by a nurse turned solo iOS developer.">
+<meta name="author" content="JUHWAN PARK">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="49 APPS, SOLO">
+<meta property="og:title" content="49 APPS, SOLO — the book">
+<meta property="og:description" content="One app a year is hard enough. I run 49.">
+<meta property="og:image" content="images/web_book.webp">
+
+<!-- 검색엔진 인증 (실제 태그로 교체) -->
+<!-- <meta name="google-site-verification" content="..."> -->
+
+<link rel="icon" type="image/png" href="images/web_icon.png">
+<link rel="apple-touch-icon" href="images/web_icon.png">
+<link rel="preload" as="image" href="images/web_book.webp">
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Pretendard','Apple SD Gothic Neo',sans-serif;color:#1d1d1f;-webkit-font-smoothing:antialiased;}
+  body{overflow-x:hidden;background:#fff;}
+  a{text-decoration:none;color:inherit;}
+  img{display:block;max-width:100%;}
+
+  /* ============ 화면 A — 언어 선택 (다크, 스크롤) ============ */
+  #select{position:fixed;inset:0;background:#121212;z-index:1000;overflow-y:auto;-webkit-overflow-scrolling:touch;
+           opacity:0;transition:opacity .6s ease;}
+  #select.show{opacity:1;}
+  #select.hide{opacity:0;visibility:hidden;pointer-events:none;}
+  #select::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 50% 32%, rgba(120,160,220,.12) 0%, transparent 60%);pointer-events:none;}
+  .sel-inner{max-width:960px;margin:0 auto;padding:96px 28px 120px;position:relative;}
+  .sel-title{text-align:center;color:#fff;font-size:30px;font-weight:300;letter-spacing:-.5px;margin-bottom:8px;
+             background:linear-gradient(180deg,#fff 30%,#a1a1a6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .sel-sub{text-align:center;color:rgba(255,255,255,.45);font-size:14px;letter-spacing:.3px;margin-bottom:56px;}
+  .sel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .lang-card{background:rgba(255,255,255,.05);border:.5px solid rgba(255,255,255,.12);border-radius:18px;
+             padding:22px 16px;text-align:center;cursor:pointer;transition:transform .25s ease, background .25s ease, border-color .25s ease;}
+  .lang-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);}
+  .lang-card .nat{color:#fff;font-size:18px;font-weight:600;letter-spacing:-.3px;line-height:1.3;}
+  .lang-card .lab{color:rgba(255,255,255,.4);font-size:12px;margin-top:6px;letter-spacing:.2px;}
+
+  /* ============ 화면 B — 랜딩 ============ */
+  #landing{opacity:0;transition:opacity .7s ease;}
+  #landing.show{opacity:1;}
+
+  /* 상단 언어 버튼 (글래스) */
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:flex-end;
+          padding:16px 24px;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+          border-bottom:.5px solid rgba(0,0,0,.06);opacity:0;transform:translateY(-100%);transition:opacity .5s ease .3s, transform .5s ease .3s;}
+  .topbar.show{opacity:1;transform:translateY(0);}
+  .lang-switch{font-size:14px;font-weight:600;color:#1d1d1f;cursor:pointer;display:flex;align-items:center;gap:6px;
+               padding:8px 16px;border-radius:980px;border:.5px solid rgba(0,0,0,.1);transition:background .2s;}
+  .lang-switch:hover{background:rgba(0,0,0,.04);}
+  .lang-switch .caret{font-size:10px;color:#86868b;}
+
+  /* 히어로 */
+  .hero{min-height:100vh;padding:120px 28px 80px;background:#0b0b0c;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:"";position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:1100px;height:700px;
+                background:radial-gradient(ellipse, rgba(120,160,220,.12) 0%, transparent 60%);pointer-events:none;}
+  .hero-book{width:100%;max-width:520px;filter:drop-shadow(0 40px 80px rgba(0,0,0,.6));animation:bookFloat 5s ease-in-out infinite;position:relative;}
+  @keyframes bookFloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-16px) rotate(.4deg);}}
+  .hero-title{color:#fff;font-size:54px;font-weight:600;letter-spacing:-2px;line-height:1.15;margin-top:56px;}
+  .hero-sub{color:rgba(255,255,255,.55);font-size:20px;font-weight:400;letter-spacing:-.2px;line-height:1.5;margin-top:18px;max-width:640px;}
+
+  /* 앱 마퀴 */
+  .marquee-section{background:#fff;padding:100px 0 80px;}
+  .apps-marquee-wrap{position:relative;overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+            mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);}
+  .apps-marquee{display:flex;gap:18px;width:max-content;animation:marq 60s linear infinite;}
+  .apps-marquee.reverse{animation:marqR 70s linear infinite;margin-top:18px;}
+  .apps-marquee:hover{animation-play-state:paused;}
+  #row1{animation-duration:65s;} #row2{animation-duration:75s;margin-top:18px;}
+  #row3{animation-duration:55s;margin-top:18px;} #row4{animation-duration:80s;margin-top:18px;}
+  @keyframes marq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  @keyframes marqR{from{transform:translateX(-50%);}to{transform:translateX(0);}}
+  .app-tile{flex-shrink:0;width:80px;height:80px;border-radius:18px;overflow:hidden;background:#fff;
+            box-shadow:0 8px 20px rgba(0,0,0,.08);transition:transform .3s ease, box-shadow .3s ease;cursor:pointer;}
+  .app-tile:hover{transform:translateY(-6px) scale(1.08);box-shadow:0 16px 30px rgba(0,0,0,.18);}
+  .app-tile img{width:100%;height:100%;object-fit:cover;}
+  .proof{text-align:center;margin-top:48px;font-size:18px;color:#86868b;letter-spacing:.2px;font-weight:500;padding:0 28px;}
+
+  /* 책 내용 (세로 2장) */
+  .book-section{background:#fafafa;padding:80px 28px 100px;}
+  .book-inner{max-width:900px;margin:0 auto;}
+  .book-row{margin-bottom:72px;}
+  .book-row:last-child{margin-bottom:0;}
+  .book-row img{width:100%;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.12);}
+  .book-cap{text-align:center;margin-top:24px;font-size:20px;color:#1d1d1f;font-weight:600;letter-spacing:-.4px;}
+
+  /* 유튜브 */
+  .yt-section{background:#fff;padding:80px 28px 120px;text-align:center;}
+  .yt-inner{max-width:720px;margin:0 auto;}
+  .yt-link{display:block;border-radius:20px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.16);transition:transform .35s ease;}
+  .yt-link:hover{transform:translateY(-6px);}
+  .yt-link img{width:100%;}
+  .yt-cap{margin-top:26px;font-size:20px;color:#0066ff;font-weight:600;letter-spacing:-.2px;}
+
+  /* 풍선 */
+  .balloon{position:fixed;right:24px;bottom:24px;background:#1d1d1f;color:#fff;padding:16px 30px;border-radius:980px;
+           font-size:16px;font-weight:600;letter-spacing:-.2px;cursor:pointer;z-index:90;
+           box-shadow:0 0 12px rgba(255,215,0,.15), 0 16px 44px rgba(0,0,0,.32);
+           opacity:0;transform:translateY(20px);transition:opacity .5s ease, transform .5s ease, box-shadow .4s ease;}
+  .balloon.show{opacity:1;transform:translateY(0);animation:balloonFloat 3s ease-in-out infinite 1s;}
+  .balloon:hover{box-shadow:0 0 30px rgba(255,215,0,.5), 0 16px 44px rgba(0,0,0,.32);}
+  @keyframes balloonFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+  /* footer */
+  .foot{background:#fafafa;border-top:.5px solid #e8e8ed;text-align:center;padding:40px 28px;font-size:12px;color:#86868b;}
+
+  /* 스크롤 페이드인 */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s ease, transform .9s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* RTL */
+  #landing.rtl .hero-title,#landing.rtl .hero-sub,#landing.rtl .proof,#landing.rtl .book-cap,#landing.rtl .yt-cap{direction:rtl;}
+  #select.rtl .lang-card .nat{direction:rtl;}
+
+  @media(max-width:768px){
+    .sel-inner{padding:72px 18px 100px;}
+    .sel-title{font-size:24px;} .sel-sub{margin-bottom:40px;}
+    .sel-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+    .lang-card{padding:18px 12px;border-radius:14px;}
+    .lang-card .nat{font-size:16px;}
+    .hero{padding:96px 20px 64px;}
+    .hero-title{font-size:32px;letter-spacing:-1.2px;margin-top:40px;}
+    .hero-sub{font-size:16px;margin-top:14px;}
+    .marquee-section{padding:64px 0 56px;}
+    .app-tile{width:60px;height:60px;border-radius:14px;}
+    .proof{font-size:15px;margin-top:32px;}
+    .book-section{padding:56px 18px 72px;}
+    .book-row{margin-bottom:48px;}
+    .book-cap{font-size:16px;margin-top:18px;}
+    .yt-section{padding:56px 18px 96px;}
+    .yt-cap{font-size:16px;}
+    .balloon{right:16px;bottom:16px;padding:14px 24px;font-size:14px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ 화면 A : 언어 선택 ============ -->
+<section id="select">
+  <div class="sel-inner">
+    <h1 class="sel-title">Select your language</h1>
+    <p class="sel-sub" id="selSub">언어를 선택하세요 · 言語を選択 · Idioma · Sprache</p>
+    <div class="sel-grid" id="selGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 화면 B : 랜딩 ============ -->
+<div id="landing">
+  <div class="topbar" id="topbar">
+    <div class="lang-switch" id="langSwitch"><span id="switchLabel">Language</span><span class="caret">&#9662;</span></div>
+  </div>
+
+  <section class="hero">
+    <img class="hero-book" id="heroBook" src="images/web_book.webp" alt="49 APPS, SOLO">
+    <h1 class="hero-title" id="heroTitle"></h1>
+    <p class="hero-sub" id="heroSub"></p>
+  </section>
+
+  <section class="marquee-section reveal">
+    <div class="apps-marquee-wrap">
+      <div class="apps-marquee" id="row1"></div>
+      <div class="apps-marquee reverse" id="row2"></div>
+      <div class="apps-marquee" id="row3"></div>
+      <div class="apps-marquee reverse" id="row4"></div>
+    </div>
+    <p class="proof" id="proof"></p>
+  </section>
+
+  <section class="book-section">
+    <div class="book-inner">
+      <div class="book-row reveal">
+        <img src="images/web_mockup_book_1.webp" alt="">
+        <p class="book-cap" id="cap1"></p>
+      </div>
+      <div class="book-row reveal">
+        <img src="images/web_mockup_book_2.webp" alt="">
+        <p class="book-cap" id="cap2"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="yt-section reveal">
+    <div class="yt-inner">
+      <a class="yt-link" id="ytLink" href="https://www.youtube.com/@fouroffapp" target="_blank" rel="noopener">
+        <img src="images/web_mockup_youtube.webp" alt="">
+      </a>
+      <a class="yt-cap" id="ytCap" href="https://www.youtube.com/@fouroffapp" target="_blank" rel="noopener"></a>
+    </div>
+  </section>
+
+  <div class="foot">© 2026 JUHWAN PARK · 49 APPS, SOLO</div>
+
+  <a class="balloon" id="balloon"></a>
+</div>
+
+<script src="js/langs.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
