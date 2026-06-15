@@ -81,7 +81,62 @@
     byId('backLabel').textContent = l.back || 'Back';
 
     // 영어판 Kindle — 언어 무관 공통 (en 페이지는 중복 방지로 제외)
-    const EN_KINDLE = {name:'Kindle (English)', fmt:['ebook'], url:'https://www.amazon.com/dp/B0H246ZGKD'};
+    // 스토어 표기를 언어별로 현지화: ["아마존 킨들 표기","영어 단어"]
+    const EN_STORE_LOC = {
+      'ko':['아마존 킨들','영어'],
+      'en':['Amazon Kindle','English'],
+      'es':['Amazon Kindle','inglés'],
+      'fr':['Amazon Kindle','anglais'],
+      'de':['Amazon Kindle','Englisch'],
+      'it':['Amazon Kindle','inglese'],
+      'pt':['Amazon Kindle','inglês'],
+      'nl':['Amazon Kindle','Engels'],
+      'pl':['Amazon Kindle','angielski'],
+      'ru':['Amazon Kindle','английский'],
+      'tr':['Amazon Kindle','İngilizce'],
+      'ar':['أمازون كيندل','الإنجليزية'],
+      'he':['אמזון קינדל','אנגלית'],
+      'ja':['Amazon Kindle','英語'],
+      'zh-hans':['亚马逊 Kindle','英文'],
+      'zh-hant':['亞馬遜 Kindle','英文'],
+      'hi':['Amazon Kindle','अंग्रेज़ी'],
+      'ta':['Amazon Kindle','ஆங்கிலம்'],
+      'sv':['Amazon Kindle','engelska'],
+      'no':['Amazon Kindle','engelsk'],
+      'da':['Amazon Kindle','engelsk'],
+      'fi':['Amazon Kindle','englanti'],
+      'mr':['Amazon Kindle','इंग्रजी'],
+      'fa':['آمازون کیندل','انگلیسی'],
+      'gu':['Amazon Kindle','અંગ્રેજી'],
+      'uk':['Amazon Kindle','англійська'],
+      'ml':['Amazon Kindle','ഇംഗ്ലീഷ്'],
+      'sco':['Amazon Kindle','Inglis'],
+      'ca':['Amazon Kindle','anglès'],
+      'af':['Amazon Kindle','Engels'],
+      'yi':['אַמאַזאָן קינדל','ענגליש'],
+      'gl':['Amazon Kindle','inglés'],
+      'cy':['Amazon Kindle','Saesneg'],
+      'la':['Amazon Kindle','Anglicus'],
+      'ga':['Amazon Kindle','Béarla'],
+      'gsw':['Amazon Kindle','Änglisch'],
+      'nb':['Amazon Kindle','engelsk'],
+      'nn':['Amazon Kindle','engelsk'],
+      'eu':['Amazon Kindle','ingelesa'],
+      'lb':['Amazon Kindle','Englesch'],
+      'fy':['Amazon Kindle','Ingelsk'],
+      'is':['Amazon Kindle','enska'],
+      'frr-e':['Amazon Kindle','Ingelsk'],
+      'frr-n':['Amazon Kindle','Aingelsk'],
+      'br':['Amazon Kindle','saozneg'],
+      'co':['Amazon Kindle','inglese'],
+      'oc':['Amazon Kindle','anglés'],
+      'rm':['Amazon Kindle','englais'],
+      'gd':['Amazon Kindle','Beurla'],
+      'kw':['Amazon Kindle','Sowsnek'],
+      'gv':['Amazon Kindle','Baarle']
+    };
+    const loc = EN_STORE_LOC[l.id] || ['Amazon Kindle','English'];
+    const EN_KINDLE = {name: loc[0]+' ('+loc[1]+')', fmt:['ebook'], url:'https://www.amazon.com/dp/B0H246ZGKD'};
     let usable = (l.stores||[]).filter(s=>s); // 존재하는 스토어
     if(l.id !== 'en'){ usable = [EN_KINDLE, ...usable]; }
     const anyLive = usable.some(s=>s.url && s.url!=='#');
