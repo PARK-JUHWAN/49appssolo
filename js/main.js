@@ -97,8 +97,30 @@ function fillRow(rowId, start, end){
     for(let i=start; i<=end; i++) el.appendChild(tile(i));
   }
 }
+/* 마퀴 애니메이션 재시작 — 모바일 첫 진입 시 이미지 로딩 reflow로 멈추는 버그 방지.
+   타일을 다 넣은 뒤, 이미지가 로드되면 애니메이션을 깨끗한 좌표로 다시 건다. */
+function restartMarquee(){
+  ['row1','row2','row3','row4'].forEach(id => {
+    const el = byId(id); if(!el) return;
+    el.style.animation = 'none';
+    void el.offsetWidth;          // reflow 강제 → 애니메이션 리셋
+    el.style.animation = '';       // CSS 정의값으로 복귀 (재시작)
+  });
+}
 function buildMarquee(){
   fillRow('row1',1,12); fillRow('row2',13,24); fillRow('row3',25,36); fillRow('row4',37,49);
+  // 모든 마퀴 이미지가 로드된 뒤 한 번 재시작 (이미 캐시면 즉시)
+  const imgs = Array.from(document.querySelectorAll('.apps-marquee img'));
+  let pending = imgs.filter(im => !im.complete).length;
+  if(pending === 0){ requestAnimationFrame(restartMarquee); }
+  else {
+    imgs.forEach(im => {
+      if(im.complete) return;
+      const done = () => { pending--; if(pending===0) requestAnimationFrame(restartMarquee); };
+      im.addEventListener('load', done, {once:true});
+      im.addEventListener('error', done, {once:true});
+    });
+  }
 }
 
 /* ---------- 화면 B : 랜딩 채우기 ---------- */
