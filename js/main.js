@@ -93,7 +93,7 @@ function tile(idx){
 }
 function fillRow(rowId, start, end){
   const el = byId(rowId); if(!el || el.childElementCount) return;
-  for(let pass=0; pass<2; pass++){          // 무한 루프 위해 2회 복제
+  for(let pass=0; pass<5; pass++){          // 무한 루프 위해 복제 (와이드 화면 빈틈 방지)
     for(let i=start; i<=end; i++) el.appendChild(tile(i));
   }
 }
