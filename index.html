@@ -90,29 +90,33 @@
   .app-tile img{width:100%;height:100%;object-fit:cover;}
   .proof{text-align:center;margin-top:48px;font-size:18px;color:#86868b;letter-spacing:.2px;font-weight:500;padding:0 28px;}
 
-  /* 책 내용 (세로 2장) */
-  .book-section{background:#fafafa;padding:80px 28px 100px;}
-  .book-inner{max-width:900px;margin:0 auto;}
-  .book-row{margin-bottom:72px;}
-  .book-row:last-child{margin-bottom:0;}
-  .book-row img{width:100%;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.12);}
-  .book-cap{text-align:center;margin-top:24px;font-size:20px;color:#1d1d1f;font-weight:600;letter-spacing:-.4px;}
+  /* 책/유튜브 — 좌우 교차 (B 레이아웃) */
+  .book-section{background:#fff;padding:40px 0 20px;}
+  .book-inner{max-width:1080px;margin:0 auto;}
+  .row{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:56px;padding:80px 40px;}
+  .row.flip .txt{order:2;} .row.flip .pic{order:1;}
+  .row .pic img{width:100%;}
+  .book-cap{font-size:34px;color:#1d1d1f;font-weight:600;letter-spacing:-1px;line-height:1.2;white-space:pre-line;}
+
+  /* 둥둥 떠다니기 — 책2 + 유튜브, 각각 다른 위상 */
+  .float1{animation:bookFloat 5.5s ease-in-out infinite;}
+  .float2{animation:bookFloat 6s ease-in-out infinite;animation-delay:-2s;}
+  .float3{animation:bookFloat 5s ease-in-out infinite;animation-delay:-3.2s;}
 
   /* 유튜브 */
-  .yt-section{background:#fff;padding:80px 28px 120px;text-align:center;}
-  .yt-inner{max-width:720px;margin:0 auto;}
-  .yt-link{display:block;border-radius:20px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.16);transition:transform .35s ease;}
-  .yt-link:hover{transform:translateY(-6px);}
+  .yt-section{background:#fff;padding:20px 0 100px;}
+  .yt-inner{max-width:1080px;margin:0 auto;}
+  .yt-link{display:block;}
   .yt-link img{width:100%;}
-  .yt-cap{margin-top:26px;font-size:20px;color:#0066ff;font-weight:600;letter-spacing:-.2px;}
+  .yt-cap{display:inline-block;margin-top:20px;font-size:20px;color:#0066ff;font-weight:600;letter-spacing:-.2px;}
 
-  /* 풍선 */
-  .balloon{position:fixed;right:24px;bottom:24px;background:#1d1d1f;color:#fff;padding:16px 30px;border-radius:980px;
-           font-size:16px;font-weight:600;letter-spacing:-.2px;cursor:pointer;z-index:90;
-           box-shadow:0 0 12px rgba(255,215,0,.15), 0 16px 44px rgba(0,0,0,.32);
+  /* 풍선 — 크게 + 강한 glow, 항상 fixed로 따라다님 */
+  .balloon{position:fixed;right:28px;bottom:28px;background:#1d1d1f;color:#fff;padding:20px 42px;border-radius:980px;
+           font-size:19px;font-weight:600;letter-spacing:-.2px;cursor:pointer;z-index:90;
+           box-shadow:0 0 30px rgba(255,215,0,.6), 0 0 60px rgba(255,215,0,.25), 0 16px 44px rgba(0,0,0,.4);
            opacity:0;transform:translateY(20px);transition:opacity .5s ease, transform .5s ease, box-shadow .4s ease;}
   .balloon.show{opacity:1;transform:translateY(0);animation:balloonFloat 3s ease-in-out infinite 1s;}
-  .balloon:hover{box-shadow:0 0 30px rgba(255,215,0,.5), 0 16px 44px rgba(0,0,0,.32);}
+  .balloon:hover{box-shadow:0 0 48px rgba(255,215,0,.85), 0 0 90px rgba(255,215,0,.4), 0 16px 44px rgba(0,0,0,.4);}
   @keyframes balloonFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 
   /* footer */
@@ -124,6 +128,7 @@
 
   /* RTL */
   #landing.rtl .hero-title,#landing.rtl .hero-sub,#landing.rtl .proof,#landing.rtl .book-cap,#landing.rtl .yt-cap{direction:rtl;}
+  #landing.rtl .row{direction:rtl;}
   #select.rtl .lang-card .nat{direction:rtl;}
 
   @media(max-width:768px){
@@ -138,12 +143,13 @@
     .marquee-section{padding:64px 0 56px;}
     .app-tile{width:60px;height:60px;border-radius:14px;}
     .proof{font-size:15px;margin-top:32px;}
-    .book-section{padding:56px 18px 72px;}
-    .book-row{margin-bottom:48px;}
-    .book-cap{font-size:16px;margin-top:18px;}
-    .yt-section{padding:56px 18px 96px;}
-    .yt-cap{font-size:16px;}
-    .balloon{right:16px;bottom:16px;padding:14px 24px;font-size:14px;}
+    .book-section{padding:24px 0 8px;}
+    .row{grid-template-columns:1fr;gap:8px;padding:40px 24px;text-align:center;}
+    .row.flip .txt{order:1;} .row.flip .pic{order:2;}
+    .book-cap{font-size:24px;}
+    .yt-section{padding:8px 0 80px;}
+    .yt-cap{font-size:17px;margin-top:8px;}
+    .balloon{right:16px;bottom:16px;padding:16px 32px;font-size:17px;}
   }
 </style>
 </head>
@@ -182,23 +188,25 @@
 
   <section class="book-section">
     <div class="book-inner">
-      <div class="book-row reveal">
-        <img src="images/web_mockup_book_1.webp" alt="">
-        <p class="book-cap" id="cap1"></p>
+      <div class="row reveal">
+        <div class="pic"><img class="float1" src="images/web_mockup_book_1.webp" alt=""></div>
+        <p class="book-cap txt" id="cap1"></p>
       </div>
-      <div class="book-row reveal">
-        <img src="images/web_mockup_book_2.webp" alt="">
-        <p class="book-cap" id="cap2"></p>
+      <div class="row flip reveal">
+        <div class="pic"><img class="float2" src="images/web_mockup_book_2.webp" alt=""></div>
+        <p class="book-cap txt" id="cap2"></p>
       </div>
     </div>
   </section>
 
-  <section class="yt-section reveal">
-    <div class="yt-inner">
-      <a class="yt-link" id="ytLink" href="https://www.youtube.com/@fouroffapp" target="_blank" rel="noopener">
-        <img src="images/web_mockup_youtube.webp" alt="">
-      </a>
-      <a class="yt-cap" id="ytCap" href="https://www.youtube.com/@fouroffapp" target="_blank" rel="noopener"></a>
+  <section class="yt-section">
+    <div class="book-inner">
+      <div class="row reveal">
+        <a class="yt-link pic" id="ytLink" href="https://www.youtube.com/@fouroffapp" target="_blank" rel="noopener">
+          <img class="float3" src="images/web_mockup_youtube.webp" alt="">
+        </a>
+        <div class="txt"><a class="yt-cap" id="ytCap" href="https://www.youtube.com/@fouroffapp" target="_blank" rel="noopener"></a></div>
+      </div>
     </div>
   </section>
 

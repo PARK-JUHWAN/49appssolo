@@ -32,6 +32,7 @@
   .fmt{font-size:12px;font-weight:600;letter-spacing:.3px;color:#0066ff;background:rgba(0,102,255,.08);
        border-radius:980px;padding:4px 12px;}
   .go{font-size:20px;color:#c7c7cc;flex-shrink:0;}
+  .go.buy{font-size:15px;font-weight:600;color:#0066ff;}
 
   /* 준비중 버튼 (비활성) */
   .store.soon{cursor:default;background:#f2f2f4;border-color:transparent;}
@@ -69,12 +70,6 @@
   const code=new URLSearchParams(location.search).get('lang');
   const l=code&&getLang(code);
 
-  const FMT={ebook:{ko:'eBook',en:'eBook'},paper:{ko:'종이책',en:'Paperback'},hard:{ko:'양장본',en:'Hardcover'}};
-  function fmtLabel(f){ // 그 언어가 ko면 한국어 라벨, 아니면 영어 라벨
-    const t=FMT[f]; if(!t) return f;
-    return (l&&l.id==='ko')?t.ko:t.en;
-  }
-
   // 돌아가기 = 항상 그 언어 랜딩으로 (history 아님, 직접 지정)
   const backHref = 'index.html' + (l ? ('?lang='+l.id) : '');
   byId('back').setAttribute('href', backHref);
@@ -85,7 +80,10 @@
     document.documentElement.lang=l.id;
     byId('backLabel').textContent = l.back || 'Back';
 
-    const usable = (l.stores||[]).filter(s=>s); // 존재하는 스토어
+    // 영어판 Kindle — 언어 무관 공통 (en 페이지는 중복 방지로 제외)
+    const EN_KINDLE = {name:'Kindle (English)', fmt:['ebook'], url:'https://www.amazon.com/dp/B0H246ZGKD'};
+    let usable = (l.stores||[]).filter(s=>s); // 존재하는 스토어
+    if(l.id !== 'en'){ usable = [EN_KINDLE, ...usable]; }
     const anyLive = usable.some(s=>s.url && s.url!=='#');
 
     if(!l.ready || usable.length===0 || !anyLive){
@@ -97,11 +95,10 @@
       const wrap=document.createElement('div'); wrap.className='wrap';
       usable.forEach(s=>{
         const live = s.url && s.url!=='#';
-        const fmts=(s.fmt||[]).map(f=>'<span class="fmt">'+fmtLabel(f)+'</span>').join('');
         if(live){
           const a=document.createElement('a');
           a.className='store'; a.href=s.url; a.target='_blank'; a.rel='noopener';
-          a.innerHTML='<div class="left"><div class="name">'+s.name+'</div><div class="fmts">'+fmts+'</div></div><div class="go">&#8594;</div>';
+          a.innerHTML='<div class="left"><div class="name">'+s.name+'</div></div><div class="go buy">'+(l.buyLabel||'Buy')+'</div>';
           wrap.appendChild(a);
         } else {
           const d=document.createElement('div');
